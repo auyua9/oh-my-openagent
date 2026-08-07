@@ -35,11 +35,22 @@ let tuiMirrorStartCount = 0
 let tuiMirrorStopCount = 0
 
 class MockBackgroundManager {
-  constructor(config: {
-    onSubagentSessionCreated?: (event: { sessionID: string; parentID: string; title: string }) => Promise<void>
-    onShutdown?: () => void | Promise<void>
-  }) {
-    backgroundManagerOptions = config
+  constructor(
+    firstArg: {
+      tmuxConfig?: unknown
+      onSubagentSessionCreated?: (event: { sessionID: string; parentID: string; title: string }) => Promise<void>
+      onShutdown?: () => void | Promise<void>
+      enableParentSessionNotifications?: boolean
+    } | PluginInput,
+    _config?: unknown,
+    legacyOptions?: {
+      tmuxConfig?: unknown
+      onSubagentSessionCreated?: (event: { sessionID: string; parentID: string; title: string }) => Promise<void>
+      onShutdown?: () => void | Promise<void>
+      enableParentSessionNotifications?: boolean
+    },
+  ) {
+    backgroundManagerOptions = legacyOptions ?? ("onSubagentSessionCreated" in firstArg ? firstArg : null)
   }
 
   async shutdown(): Promise<void> {
